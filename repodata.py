@@ -5,21 +5,11 @@ from threading import Thread, Lock
 from queue import Queue, Empty
 import requests
 
+from .cli.logger import EnumerateLogger
+
 REPODATA_DIR = "repodata/"
 CHUNK_SIZE = 1048576
-THREADS = 4
-
-
-class SimpleLogger():
-    def __init__(self):
-        self.lock = Lock()
-        self.id = 0
-
-    def log(self):
-        self.lock.acquire()
-        self.id += 1
-        print(self.id)
-        self.lock.release()
+THREADS = 8
 
 
 class FileDownloadThread(Thread):
@@ -52,7 +42,7 @@ class FileDownloadThread(Thread):
 class FileDownloader():
     def __init__(self):
         self.queue = Queue()
-        self.logger = SimpleLogger()
+        self.logger = EnumerateLogger()
 
     def add(self, url):
         self.queue.put(url)
