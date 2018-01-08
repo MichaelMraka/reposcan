@@ -5,7 +5,7 @@ from threading import Thread, Lock
 from queue import Queue, Empty
 import requests
 
-from .cli.logger import EnumerateLogger
+from cli.logger import EnumerateLogger
 
 REPODATA_DIR = "repodata/"
 CHUNK_SIZE = 1048576
