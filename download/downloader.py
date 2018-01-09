@@ -50,7 +50,7 @@ class FileDownloader:
 
     def run(self):
         threads = []
-        for i in range(THREADS):
+        for i in range(min(THREADS, self.queue.qsize())):
             print("Starting thread %d" % i)
             thread = FileDownloadThread(self.queue, self.logger)
             thread.setDaemon(True)
