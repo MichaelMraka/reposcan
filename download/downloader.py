@@ -59,3 +59,4 @@ class FileDownloader:
 
         for t in threads:
             t.join()
+        print("Finished")
