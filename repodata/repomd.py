@@ -25,17 +25,7 @@ class RepoMD:
             self.data[data_type] = {"location": location, "size": size,
                                     "checksum_type": checksum_type, "checksum": checksum}
 
-    def get_primary(self):
-        if "primary" not in self.data:
-            raise RepoMDTypeNotFound()
-        return self.data["primary"]
-
-    def get_primary_db(self):
-        if "primary_db" not in self.data:
-            raise RepoMDTypeNotFound()
-        return self.data["primary_db"]
-
-    def get_updateinfo(self):
-        if "updateinfo" not in self.data:
-            raise RepoMDTypeNotFound()
-        return self.data["updateinfo"]
+    def get_metadata(self, data_type):
+        if data_type not in self.data:
+            raise RepoMDTypeNotFound(data_type)
+        return self.data[data_type]

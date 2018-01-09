@@ -22,13 +22,13 @@ def download_repodata(repo_url):
     downloader.run()
     repomd = RepoMD("repomd.xml")
 
-    primary = repomd.get_primary()
+    primary = repomd.get_metadata("primary")
     primary_url = urljoin(repo_url, primary["location"])
     downloader.add(DownloadItem(
         source_url=primary_url,
         target_path=os.path.basename(primary["location"])
     ))
-    updateinfo = repomd.get_updateinfo()
+    updateinfo = repomd.get_metadata("updateinfo")
     updateinfo_url = urljoin(repo_url, updateinfo["location"])
     downloader.add(DownloadItem(
         source_url=updateinfo_url,
