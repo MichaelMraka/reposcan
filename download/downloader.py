@@ -7,6 +7,12 @@ CHUNK_SIZE = 1048576
 THREADS = 8
 
 
+class DownloadItem:
+    def __init__(self, source_url=None, target_path=None):
+        self.source_url = source_url
+        self.target_path = target_path
+
+
 class FileDownloadThread(Thread):
     def __init__(self, queue, logger):
         Thread.__init__(self)
@@ -14,9 +20,9 @@ class FileDownloadThread(Thread):
         self.session = requests.Session()
         self.logger = logger
 
-    def _download(self, url, target_filename):
-        with open(target_filename, "wb") as file_handle:
-            with self.session.get(url, stream=True) as response:
+    def _download(self, source_url, target_path):
+        with open(target_path, "wb") as file_handle:
+            with self.session.get(source_url, stream=True) as response:
                 for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
                     if chunk:
                         file_handle.write(chunk)
@@ -24,10 +30,10 @@ class FileDownloadThread(Thread):
     def run(self):
         while not self.queue.empty():
             try:
-                params = self.queue.get(block=False)
+                download_item = self.queue.get(block=False)
             except Empty:
                 break
-            self._download(params, "/dev/null")
+            self._download(download_item.source_url, download_item.target_path)
             self.queue.task_done()
             self.logger.log()
 
@@ -39,8 +45,8 @@ class FileDownloader:
         self.queue = Queue()
         self.logger = EnumerateLogger()
 
-    def add(self, url):
-        self.queue.put(url)
+    def add(self, download_item):
+        self.queue.put(download_item)
 
     def run(self):
         threads = []
