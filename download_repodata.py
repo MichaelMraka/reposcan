@@ -1,5 +1,6 @@
 import os
 import sys
+import tempfile
 from urllib.parse import urljoin
 
 from download.downloader import FileDownloader, DownloadItem
@@ -9,50 +10,29 @@ REPODATA_DIR = "repodata/"
 
 
 def download_repodata(repo_url):
+    tmp_directory = tempfile.mkdtemp(prefix="repo-")
     repodata_url = urljoin(repo_url, REPODATA_DIR)
     repomd_url = urljoin(repodata_url, "repomd.xml")
     print("Repomd URL: %s" % repomd_url)
-    downloader = FileDownloader()
+    target_repomd_path = os.path.join(tmp_directory, "repomd.xml")
 
     # Get repomd
+    downloader = FileDownloader()
     downloader.add(DownloadItem(
         source_url=repomd_url,
-        target_path="repomd.xml"
+        target_path=target_repomd_path
     ))
     downloader.run()
-    repomd = RepoMD("repomd.xml")
+    repomd = RepoMD(target_repomd_path)
 
-    primary = repomd.get_metadata("primary")
-    primary_url = urljoin(repo_url, primary["location"])
-    downloader.add(DownloadItem(
-        source_url=primary_url,
-        target_path=os.path.basename(primary["location"])
-    ))
-    updateinfo = repomd.get_metadata("updateinfo")
-    updateinfo_url = urljoin(repo_url, updateinfo["location"])
-    downloader.add(DownloadItem(
-        source_url=updateinfo_url,
-        target_path=os.path.basename(updateinfo["location"])
-    ))
-    downloader.run()
-
-
-def test():
-    downloader = FileDownloader()
-    # downloader.add("http://download.eng.brq.redhat.com/pub/fedora/linux/updates/27/x86_64/repodata/repomd.xml")
-    item1 = DownloadItem(
-        source_url="http://download-node-02.eng.bos.redhat.com/fedora/linux/updates/27/x86_64/repodata/repomd.xml",
-        target_path="/dev/null")
-    item2 = DownloadItem(
-        source_url="http://download-node-02.eng.bos.redhat.com/fedora/linux/updates/26/x86_64/repodata/repomd.xml",
-        target_path="/dev/null")
-    item3 = DownloadItem(
-        source_url="http://download-node-02.eng.bos.redhat.com/fedora/linux/updates/25/x86_64/repodata/repomd.xml",
-        target_path="/dev/null")
-    for _ in range(100):
-        downloader.add(item1)
-        downloader.add(item2)
-        downloader.add(item3)
+    # Get primary and updateinfo
+    for md_type in ("primary", "updateinfo"):
+        md = repomd.get_metadata(md_type)
+        md_url = urljoin(repo_url, md["location"])
+        downloader.add(DownloadItem(
+            source_url=md_url,
+            target_path=os.path.join(tmp_directory, os.path.basename(md["location"]))
+        ))
     downloader.run()
 
 
