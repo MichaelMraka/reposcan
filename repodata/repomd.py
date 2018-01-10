@@ -11,8 +11,6 @@ class RepoMDTypeNotFound(Exception):
 
 class RepoMD:
     def __init__(self, filename):
-        """Parse whitelisted fields here.
-        """
         self.tree = eT.parse(filename)
         root = self.tree.getroot()
         self.data = {}
