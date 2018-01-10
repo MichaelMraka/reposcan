@@ -1,7 +1,7 @@
 from threading import Thread
 from queue import Queue, Empty
 import requests
-from cli.logger import EnumerateLogger
+from cli.logger import SimpleLogger
 
 CHUNK_SIZE = 1048576
 THREADS = 8
@@ -35,7 +35,7 @@ class FileDownloadThread(Thread):
                 break
             self._download(download_item.source_url, download_item.target_path)
             self.queue.task_done()
-            self.logger.log()
+            self.logger.log("%s -> %s" % (download_item.source_url, download_item.target_path))
 
         self.session.close()
 
@@ -43,7 +43,7 @@ class FileDownloadThread(Thread):
 class FileDownloader:
     def __init__(self):
         self.queue = Queue()
-        self.logger = EnumerateLogger()
+        self.logger = SimpleLogger()
 
     def add(self, download_item):
         self.queue.put(download_item)
@@ -51,7 +51,7 @@ class FileDownloader:
     def run(self):
         threads = []
         for i in range(min(THREADS, self.queue.qsize())):
-            print("Starting thread %d" % i)
+            self.logger.log("Starting thread %d." % i)
             thread = FileDownloadThread(self.queue, self.logger)
             thread.setDaemon(True)
             thread.start()
@@ -59,4 +59,4 @@ class FileDownloader:
 
         for t in threads:
             t.join()
-        print("Finished")
+        self.logger.log("Download finished.")
