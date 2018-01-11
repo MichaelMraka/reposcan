@@ -1,5 +1,5 @@
 import unittest
-
+from xml.etree.ElementTree import ParseError
 from repodata.repomd import RepoMD, RepoMDTypeNotFound
 
 
@@ -13,8 +13,13 @@ class TestRepoMD(unittest.TestCase):
     def _test_repomd(self, md):
         self.assertTrue("location" in md)
         self.assertTrue("size" in md)
+        self.assertIsInstance(md["size"], int)
         self.assertTrue("checksum_type" in md)
         self.assertTrue("checksum" in md)
+
+    def test_invalid_file(self):
+        with self.assertRaises(ParseError):
+            RepoMD("/dev/null")
 
     def test_get_primary(self):
         primary1 = self.repomd.get_metadata("primary")
