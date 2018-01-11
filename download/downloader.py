@@ -23,9 +23,11 @@ class FileDownloadThread(Thread):
     def _download(self, source_url, target_path):
         with open(target_path, "wb") as file_handle:
             with self.session.get(source_url, stream=True) as response:
-                for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-                    if chunk:
-                        file_handle.write(chunk)
+                while True:
+                    chunk = response.raw.read(CHUNK_SIZE, decode_content=False)
+                    if chunk == b"":
+                        break
+                    file_handle.write(chunk)
 
     def run(self):
         while not self.queue.empty():
