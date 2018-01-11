@@ -9,13 +9,12 @@ class TestPrimaryMD(unittest.TestCase):
         self.primary = PrimaryMD("test_data/repodata/primary.xml")
 
     def _test_package(self, pkg):
-        self.assertTrue("name" in pkg)
-        self.assertTrue("epoch" in pkg)
-        self.assertTrue("ver" in pkg)
-        self.assertTrue("rel" in pkg)
-        self.assertTrue("arch" in pkg)
-        self.assertTrue("checksum_type" in pkg)
-        self.assertTrue("checksum" in pkg)
+        intended_fields = ["name", "epoch", "ver", "rel", "arch", "checksum_type", "checksum"]
+        actual_fields = pkg.keys()
+        for field in intended_fields:
+            self.assertTrue(field in actual_fields)
+        for field in actual_fields:
+            self.assertTrue(field in intended_fields)
 
     def test_invalid_file(self):
         with self.assertRaises(FileNotFoundError):
@@ -28,5 +27,5 @@ class TestPrimaryMD(unittest.TestCase):
         packages = self.primary.list_packages()
         # Package count read from field and number of actually parsed packages should be same
         self.assertEqual(pkg_count, len(packages))
-        # Test fields in first package in list
+        # Test fields of first package in list
         self._test_package(packages[0])
