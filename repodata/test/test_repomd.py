@@ -7,8 +7,8 @@ class TestRepoMD(unittest.TestCase):
     def setUp(self):
         """Setup two repomd files. First with all sections. Second with primary section only.
         """
-        self.repomd = RepoMD("test_data/repomd/repomd.xml")
-        self.repomd_primary_only = RepoMD("test_data/repomd/repomd_primary_only.xml")
+        self.repomd = RepoMD("test_data/repodata/repomd.xml")
+        self.repomd_primary_only = RepoMD("test_data/repodata/repomd_primary_only.xml")
 
     def _test_repomd(self, md):
         self.assertTrue("location" in md)

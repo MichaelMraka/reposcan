@@ -6,7 +6,7 @@ from repodata.primary import PrimaryMD
 class TestPrimaryMD(unittest.TestCase):
     def setUp(self):
         """Setup example primary file."""
-        self.primary = PrimaryMD("test_data/repomd/primary.xml")
+        self.primary = PrimaryMD("test_data/repodata/primary.xml")
 
     def _test_package(self, pkg):
         self.assertTrue("name" in pkg)
