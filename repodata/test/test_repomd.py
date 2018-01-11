@@ -18,21 +18,20 @@ class TestRepoMD(unittest.TestCase):
         self.assertTrue("checksum" in md)
 
     def test_invalid_file(self):
+        with self.assertRaises(FileNotFoundError):
+            RepoMD("/file/does/not/exist")
         with self.assertRaises(ParseError):
             RepoMD("/dev/null")
 
     def test_get_primary(self):
         primary1 = self.repomd.get_metadata("primary")
-        self.assertIsNotNone(primary1)
         self._test_repomd(primary1)
 
         primary2 = self.repomd_primary_only.get_metadata("primary")
-        self.assertIsNotNone(primary2)
         self._test_repomd(primary2)
 
     def test_get_updateinfo(self):
         updateinfo1 = self.repomd.get_metadata("updateinfo")
-        self.assertIsNotNone(updateinfo1)
         self._test_repomd(updateinfo1)
 
         # Should fail

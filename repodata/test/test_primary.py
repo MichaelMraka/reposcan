@@ -18,6 +18,8 @@ class TestPrimaryMD(unittest.TestCase):
         self.assertTrue("checksum" in pkg)
 
     def test_invalid_file(self):
+        with self.assertRaises(FileNotFoundError):
+            PrimaryMD("/file/does/not/exist")
         with self.assertRaises(ParseError):
             PrimaryMD("/dev/null")
 
