@@ -11,8 +11,8 @@ class RepoMDTypeNotFound(Exception):
 
 class RepoMD:
     def __init__(self, filename):
-        self.tree = eT.parse(filename)
-        root = self.tree.getroot()
+        tree = eT.parse(filename)
+        root = tree.getroot()
         self.data = {}
         for child in root.findall("repo:data", NS):
             data_type = child.get("type")

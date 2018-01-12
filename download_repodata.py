@@ -44,6 +44,7 @@ def download_repodata(repo_url):
     unpacker.run()
 
     primary = PrimaryMD(md_files["primary"])
+    print(primary.get_package_count())
 
 if __name__ == '__main__':
     repo_url = sys.argv[1]
