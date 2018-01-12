@@ -7,7 +7,7 @@ KNOWN_UPDATE_TYPES = ["security", "bugfix", "enhancement", "newpackage"]
 
 class TestUpdateInfoMD(unittest.TestCase):
     def setUp(self):
-        """Setup example primary file."""
+        """Setup example updateinfo file."""
         self.updateinfo = UpdateInfoMD("test_data/repodata/updateinfo.xml")
 
     def _test_reference(self, reference):
