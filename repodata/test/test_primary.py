@@ -27,5 +27,6 @@ class TestPrimaryMD(unittest.TestCase):
         packages = self.primary.list_packages()
         # Package count read from field and number of actually parsed packages should be same
         self.assertEqual(pkg_count, len(packages))
-        # Test fields of first package in list
-        self._test_package(packages[0])
+        # Test fields of packages in list
+        for pkg in packages:
+            self._test_package(pkg)
