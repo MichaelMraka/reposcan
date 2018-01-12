@@ -40,8 +40,10 @@ class FileUnpacker:
             os.unlink(file_path)
             self.logger.log("%s -> %s" % (file_path, unpacked_file_path))
         else:
-            print("File format not supported to unpack.")
+            self.logger.log("%s skipped.")
 
     def run(self):
+        self.logger.log("Unpacking started.")
         for file_path in self.queue:
             self._unpack(file_path)
+        self.logger.log("Unpacking finished.")

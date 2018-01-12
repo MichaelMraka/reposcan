@@ -51,6 +51,7 @@ class FileDownloader:
         self.queue.put(download_item)
 
     def run(self):
+        self.logger.log("Downloading started.")
         threads = []
         for i in range(min(THREADS, self.queue.qsize())):
             self.logger.log("Starting thread %d." % i)
@@ -59,6 +60,7 @@ class FileDownloader:
             thread.start()
             threads.append(thread)
 
-        for t in threads:
+        for i, t in enumerate(threads):
             t.join()
-        self.logger.log("Download finished.")
+            self.logger.log("Stopping thread %d." % i)
+        self.logger.log("Downloading finished.")
