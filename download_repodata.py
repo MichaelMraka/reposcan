@@ -5,7 +5,8 @@ from urllib.parse import urljoin
 
 from download.downloader import FileDownloader, DownloadItem
 from download.unpacker import FileUnpacker
-from repodata.repomd import RepoMD
+from repodata.repository import Repository
+from repodata.repomd import RepoMD, RepoMDTypeNotFound
 from repodata.primary import PrimaryMD
 from repodata.updateinfo import UpdateInfoMD
 
@@ -32,7 +33,10 @@ def download_repodata(repo_url):
     md_files = {}
     # Get primary and updateinfo
     for md_type in ("primary", "updateinfo"):
-        md = repomd.get_metadata(md_type)
+        try:
+            md = repomd.get_metadata(md_type)
+        except RepoMDTypeNotFound:
+            continue
         md_url = urljoin(repo_url, md["location"])
         downloader.add(DownloadItem(
             source_url=md_url,
@@ -44,13 +48,25 @@ def download_repodata(repo_url):
     downloader.run()
     unpacker.run()
 
-    primary = PrimaryMD(md_files["primary"])
-    print(primary.get_package_count())
+    primary = updateinfo = None
+    for md_type in md_files:
+        if md_type == "primary":
+            primary = PrimaryMD(md_files["primary"])
+        elif md_type == "updateinfo":
+            updateinfo = UpdateInfoMD(md_files["updateinfo"])
 
-    updateinfo = UpdateInfoMD(md_files["updateinfo"])
-    print(updateinfo.get_update_count())
+    return Repository(repo_url, repomd, primary, updateinfo=updateinfo)
+
+
 
 if __name__ == '__main__':
     repo_url = sys.argv[1]
-    print("Repo URL: %s" % repo_url)
-    download_repodata(repo_url)
+    if not repo_url.endswith("/"):
+        repo_url += "/"
+    repo = download_repodata(repo_url)
+    print(repo.get_package_count())
+    print(repo.get_update_count())
+    print(repo.get_update_count(type="security"))
+    print(repo.get_update_count(type="bugfix"))
+    print(repo.get_update_count(type="enhancement"))
+    print(repo.get_update_count(type="newpackage"))
