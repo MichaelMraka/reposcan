@@ -7,6 +7,7 @@ from download.downloader import FileDownloader, DownloadItem
 from download.unpacker import FileUnpacker
 from repodata.repomd import RepoMD
 from repodata.primary import PrimaryMD
+from repodata.updateinfo import UpdateInfoMD
 
 REPODATA_DIR = "repodata/"
 
@@ -45,6 +46,9 @@ def download_repodata(repo_url):
 
     primary = PrimaryMD(md_files["primary"])
     print(primary.get_package_count())
+
+    updateinfo = UpdateInfoMD(md_files["updateinfo"])
+    print(updateinfo.get_update_count())
 
 if __name__ == '__main__':
     repo_url = sys.argv[1]
