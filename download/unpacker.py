@@ -1,6 +1,7 @@
 import os
 import gzip
 import lzma
+import bz2
 from cli.logger import SimpleLogger
 
 CHUNK_SIZE = 1048576
@@ -20,6 +21,8 @@ class FileUnpacker:
             return gzip.open
         elif file_path.endswith(".xz"):
             return lzma.open
+        elif file_path.endswith(".bz2"):
+            return bz2.open
         else:
             return None
 
