@@ -33,11 +33,15 @@ class TestRepository(unittest.TestCase):
         # Re-count updates of all known types
         update_sum = 0
         for update_type in KNOWN_UPDATE_TYPES:
-            cnt = self.repository.get_update_count(type=update_type)
+            cnt = self.repository.get_update_count(update_type=update_type)
             self.assertGreater(cnt, 0)
             update_sum += cnt
         self.assertEqual(update_sum, self.repository.get_update_count())
 
         # Repository without updateinfo returns 0 regardless of specified update type
         for update_type in KNOWN_UPDATE_TYPES:
-            self.assertEqual(self.repository_without_updateinfo.get_update_count(type=update_type), 0)
+            self.assertEqual(self.repository_without_updateinfo.get_update_count(update_type=update_type), 0)
+
+    def test_listing(self):
+        self.assertEqual(len(self.repository.list_packages()), self.repository.get_package_count())
+        self.assertEqual(len(self.repository.list_updates()), self.repository.get_update_count())
